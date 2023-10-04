@@ -36,6 +36,8 @@ type RecordScreenNativeModule = {
   ): void;
   startRecording(): Promise<RecordingStartResponse>;
   stopRecording(): Promise<RecordingResponse>;
+  pauseRecording(): Promise<RecordingResponse>;
+  playRecording(): Promise<RecordingResponse>;
   clean(): Promise<string>;
 };
 
@@ -63,6 +65,14 @@ class ReactNativeRecordScreenClass {
 
   stopRecording() {
     return RS.stopRecording();
+  }
+
+  playRecording() {
+    return RS.playRecording();
+  }
+
+  pauseRecording() {
+    return RS.pauseRecording();
   }
 
   clean() {

@@ -14,6 +14,44 @@ UIBackgroundTaskIdentifier _backgroundRenderingID;
 
 }
 
+RCT_REMAP_METHOD(resumeRecording,
+                 resumeResolve:(RCTPromiseResolveBlock)resolve
+                 resumeRejecte:(RCTPromiseRejectBlock)reject)
+{
+    if (@available(iOS 13.0, *)) {
+        if ([RPScreenRecorder sharedRecorder].isPaused) {
+            [[RPScreenRecorder sharedRecorder] resume];
+            resolve(@"resumed");
+        } else {
+            NSError* err = [NSError errorWithDomain:@"com.yourapp" code:400 userInfo:@{NSLocalizedDescriptionKey: @"Not paused. Cannot resume."}];
+            reject(@"NOT_PAUSED", @"Not currently paused. Cannot resume.", err);
+        }
+    } else {
+        NSError* err = [NSError errorWithDomain:@"com.yourapp" code:400 userInfo:@{NSLocalizedDescriptionKey: @"iOS version does not support resuming."}];
+        reject(@"UNSUPPORTED_IOS_VERSION", @"iOS version does not support resuming.", err);
+    }
+}
+
+
+RCT_REMAP_METHOD(pauseRecording,
+                 pauseResolve:(RCTPromiseResolveBlock)resolve
+                 pauseRejecte:(RCTPromiseRejectBlock)reject)
+{
+    if (@available(iOS 13.0, *)) {
+        if ([RPScreenRecorder sharedRecorder].isRecording) {
+            [[RPScreenRecorder sharedRecorder] pause];
+            resolve(@"paused");
+        } else {
+            NSError* err = [NSError errorWithDomain:@"com.yourapp" code:400 userInfo:@{NSLocalizedDescriptionKey: @"Not recording. Cannot pause."}];
+            reject(@"NOT_RECORDING", @"Not currently recording.", err);
+        }
+    } else {
+        NSError* err = [NSError errorWithDomain:@"com.yourapp" code:400 userInfo:@{NSLocalizedDescriptionKey: @"iOS version does not support pausing."}];
+        reject(@"UNSUPPORTED_IOS_VERSION", @"iOS version does not support pausing.", err);
+    }
+}
+
+
 - (NSDictionary *) successResponse:(NSDictionary *)result;
 {
     NSDictionary *json = [NSDictionary dictionaryWithObjectsAndKeys:
